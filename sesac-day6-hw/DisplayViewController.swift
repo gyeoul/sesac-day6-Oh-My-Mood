@@ -17,29 +17,27 @@ class DisplayViewController: UIViewController {
             }
         }
     }
+    var emotionData = saveStruct(score: [])
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        for v in viewList {
+            v.layer.cornerRadius = 15
+        }
         // Do any additional setup after loading the view.
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        for v in viewList {
-            v.layer.cornerRadius = 15
-            for i in 0...countList.count-1 {
-                countList[i].text = "\(UserDefaults.standard.integer(forKey: "Emotion\(i)"))회"
+        if let saveData = UserDefaults.standard.object(forKey: "EmotionData") as? Data {
+            let decoder = JSONDecoder()
+            if let decodeData = try? decoder.decode(saveStruct.self, from: saveData) {
+                emotionData = decodeData
             }
+        } else {
+            emotionData = saveStruct(score: [0,0,0,0,0])
+        }
+        for i in 0...emotionData.score.count-1 {
+            countList[i].text = "\(emotionData.score[i])회"
         }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
 }
