@@ -9,7 +9,7 @@ import UIKit
 
 class EditViewController: UIViewController {
     enum Emotion:Int,CaseIterable {
-        case verygood,good,soso,bad,verybad
+        case VERY_GOOD,GOOD,SOSO,BAD,VERY_BAD
     }
     enum EditValue:Int,CaseIterable {
         case add1=1,add5=5,add10=10,reset=0
@@ -17,7 +17,6 @@ class EditViewController: UIViewController {
     struct saveStruct:Codable {
         var score:[Int]=[];
     }
-    var score:[Int] = [0,0,0,0,0]
     @IBOutlet var emontionButtons: [UIButton]! {
         didSet {
             emontionButtons.sort {
@@ -34,7 +33,7 @@ class EditViewController: UIViewController {
             action.append(UIAction(title: "+1", handler: { _ in self.changeValue(value: EditValue.add1,target: b.tag) }))
             action.append(UIAction(title: "+5", handler: { _ in self.changeValue(value: EditValue.add5,target: b.tag) }))
             action.append(UIAction(title: "+10", handler: { _ in self.changeValue(value: EditValue.add10,target: b.tag) }))
-            action.append(UIAction(title: "리셋", handler: { _ in self.changeValue(value: EditValue.reset,target: b.tag) }))
+            action.append(UIAction(title: "리셋",attributes: .destructive, handler: { _ in self.changeValue(value: EditValue.reset,target: b.tag) }))
             if let title = Emotion(rawValue: b.tag) {
                 b.menu = UIMenu(title: "\(title)", children: action)
             }
@@ -48,16 +47,13 @@ class EditViewController: UIViewController {
             return
         }
         print(now)
-        score[sender.tag]+=1
-        print(score)
     }
     func changeValue(value:EditValue,target:Int) {
+        let key = "Emotion\(target)"
         if value == .reset {
-            score[target] = 0
-            print(score)
+            UserDefaults.standard.set(0, forKey: key)
             return
         }
-        score[target] += value.rawValue
-        print(score)
+        UserDefaults.standard.set(UserDefaults.standard.integer(forKey: key)+value.rawValue,forKey: key)
     }
 }
